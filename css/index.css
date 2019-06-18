@@ -1,0 +1,129 @@
+.part{
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 0.2rem;
+}
+.part .item{
+  border-bottom: 1px solid #eee;
+  padding: 0 0.32rem;
+  height: 0.9rem;
+  line-height: 0.9rem;
+}
+.part .item:last-child{
+  border-bottom:none;
+}
+.part .item .lt,.apply-reason-wrap .apply-reason{
+  color: #333;
+  font-size: 0.3rem;
+}
+.part .item .rt{
+  min-width: 1rem;
+  text-align: right;
+}
+.part .item .rt,.apply-reason-wrap .reason{
+  color: #999;
+  font-size: 0.28rem;
+}
+.part .item .rt i{
+  font-size: 0.24rem;
+}
+.part .item .rt span{
+  margin-right: 3px;
+}
+.part .item .item-p{ 
+  letter-spacing: 0.6rem;
+}
+.apply-reason-wrap{
+  padding: 0.25rem 0.32rem;
+}
+.apply-reason-wrap .apply-reason{
+  line-height: 0.42rem;
+}
+.apply-reason-wrap .reason{
+  line-height: 0.40rem;
+  margin-top: 0.12rem;
+}
+.rule-wrap{
+  margin: 0.45rem 0 0.2rem 0;
+  font-size: 0.26rem;
+}
+.rule-wrap .rule-checked-icon{
+  font-size: 0.3rem;
+}
+.rule-checked-icon.icon-icon_fuxuan_weixuanz{
+  color:#999;
+}
+.rule-checked-icon.icon-yduifuxuankuangxuanz{
+  color:#1AAD19;
+}
+.rule-wrap span{
+  color: #999;
+  margin-left: 0.1rem;
+}
+.rule-wrap b{
+  color: #333;
+  font-weight: normal;
+}
+.btn{
+  background: #1AAD19;
+  opacity: 0.4;
+  height: 0.94rem;
+  line-height: 0.94rem;
+  text-align: center;
+  font-size: 0.36rem;
+  border-radius:6px; 
+  color: #fff;
+}
+.btn.on{
+  opacity: 1;
+}
+.change-time-wrap{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.5);
+  display: none;
+}
+.change-time-wrap.on{
+  display: block;
+}
+.change-time-content.on{
+  bottom: 0;
+  z-index: 1;
+}
+.change-time-content{
+  position: absolute;
+  bottom: -3rem;
+  left: 0;
+  width: 100%;
+  padding: 0 0.2rem 0.2rem;
+  transition: all 0.2s;
+  z-index: -1;
+}
+.change-time-content ul{
+  border-radius: 6px;
+  background: #fff;
+}
+.change-time-content ul li{
+  text-align: center;
+}
+.time-list li:first-child{
+  height: 0.88rem;
+  color: #999;
+  font-size: 0.24rem;
+  line-height: 0.88rem;
+}
+.time-list li:not(:first-child),.btn-wrap li{
+  height: 1.14rem;
+  color: #333;
+  font-size: 0.36rem;
+  line-height: 1.14rem;
+}
+.time-list li:not(:first-child){
+  border-top:1px solid #eee;
+}
+.btn-wrap{
+  margin-top:0.2rem;
+}

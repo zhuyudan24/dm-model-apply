@@ -1,0 +1,262 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta content="yes" name="apple-mobile-web-app-capable">
+  <meta content="yes" name="apple-touch-fullscreen">
+  <meta content="telephone=no,email=no" name="format-detection">
+  <meta content="black" name="apple-mobile-web-app-status-bar-style">
+  <title>风险模式申请</title>
+  <link rel="stylesheet" href="css/public.css">
+  <link rel="stylesheet" href="css/font/iconfont.css">
+  <link rel="stylesheet" href="css/index.css?v=0140823">
+  <!-- <script src="https://lib.baomitu.com/vue/2.5.22/vue.min.js"></script>
+  <script src="https://lib.baomitu.com/axios/0.19.0-beta.1/axios.min.js"></script>
+  <script src="https://lib.baomitu.com/qs/6.6.0/qs.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script> -->
+  <script src="js/vue.min.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script src="js/qs.min.js"></script>
+  <script src="js/babel.min.js"></script>
+  <script src="js/rem.js"></script>
+</head>
+<body>
+  <div id="content">
+    <div class="part">
+      <div class="item clearfix">
+        <p class="lt">商户名称</p>
+        <p class="rt" v-cloak>{{ detailObj.enterpriseName }}</p>
+      </div>
+      <div class="item clearfix">
+        <p class="lt item-p">姓名</p>
+        <p class="rt" v-cloak>{{ detailObj.applyName }}</p>
+      </div>
+      <div class="item clearfix">
+        <p class="lt item-p">手机</p>
+        <p class="rt" v-cloak>{{ detailObj.applyPhone }}</p>
+      </div>
+      <div class="item clearfix">
+        <p class="lt item-p">职位</p>
+        <p class="rt" v-cloak>{{ detailObj.applyPositionName }}</p>
+      </div>
+    </div>
+    <div class="part">
+      <div class="item clearfix">
+        <p class="lt">申请时间</p>
+        <p class="rt" v-cloak>{{ detailObj.applyTime | dateFormat('YYYY-MM-DD hh:mm:ss') }}</p>
+      </div>
+      <div v-if="type=='1'">
+        <div class="item clearfix">
+          <p class="lt">申请时长</p>
+          <p class="rt" @click="showTime">
+            <span v-if="detailObj.duration == 1">5分钟</span>
+            <span v-else-if="detailObj.duration == 2">15分钟</span>
+            <span v-else-if="detailObj.duration == 3">1小时</span>
+            <span v-else-if="detailObj.duration == 4">6小时</span>
+            <span v-else-if="detailObj.duration == 5">24小时</span>
+            <span v-else-if="detailObj.duration == 6">7天</span>
+            <span v-else-if="detailObj.duration == 7">30天</span>
+            <!-- <span>{{ timeValue }}</span> -->
+            <i class="font_family icon-arrow_right"></i>
+          </p>
+        </div>
+        <div class="apply-reason-wrap">
+          <p class="apply-reason">申请理由</p>
+          <p class="reason" v-cloak>{{ detailObj.applyReason }}</p>
+        </div>
+      </div>
+      <div v-if="type=='2'">
+        <div class="item clearfix">
+          <p class="lt">时间范围</p>
+          <p class="rt" v-cloak>{{ detailObj.reportStartTime | dateFormat('YYYY-MM-DD') }}至{{ detailObj.reportEndTime | dateFormat('YYYY-MM-DD') }}</p>
+        </div>
+        <div class="item clearfix">
+          <p class="lt">数据内容</p>
+          <p class="rt" v-cloak>{{ detailObj.dataContent }}</p>
+        </div>
+        <div class="item clearfix">
+          <p class="lt">数量总量</p>
+          <p class="rt" v-cloak>{{ detailObj.dataCount }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rule-wrap">
+      <i @click="changeRuleState" class="font_family rule-checked-icon" :class="{'icon-icon_fuxuan_weixuanz':!ruleChecked,'icon-yduifuxuankuangxuanz':ruleChecked}"></i>
+      <span>我已阅读<b @click="getRules">《风险声明》</b></span>
+    </div>
+    <div class="btn" :class="{'on':ruleChecked}" @click="enterApply">通过申请</div>
+    <!-- 错误提示 -->
+    <div class="toast-wrap" :class="{'on':defaultBool}" v-cloak>{{ defaultMsg }}</div>
+    <!-- 修改时长 -->
+    <div class="change-time-wrap" @click="cancelTime" :class="{'on':toggleTimeBool}">
+      <div class="change-time-content" @click.stop.prevent :class="{'on':toggleTimeBool}">
+        <ul class="time-list">
+          <li>选择申请时长</li>
+          <li @click="selectTime('5分钟',1)">5分钟</li>
+          <li @click="selectTime('15分钟',2)">15分钟</li>
+          <li @click="selectTime('1小时',3)">1小时</li>
+          <li @click="selectTime('6小时',4)">6小时</li>
+          <li @click="selectTime('24小时',5)">24小时</li>
+          <li @click="selectTime('7天',6)">7天</li>
+          <li @click="selectTime('30天',7)">30天</li>
+        </ul>
+        <ul class="btn-wrap">
+          <li @click="cancelTime">取消</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script type="text/babel">
+    let host = location.host;
+    // axios.defaults.baseURL =  'http://gicdev.demogic.com';
+    var app = new Vue({
+      el:"#content",
+      data:{
+        ruleChecked:false,
+        toggleTimeBool:false,
+        applyId:'', // 路由获取申请id
+        openid:'' ,  // 
+        type:'1',   // 1风险模式申请  type为2完整数据下载申请
+        timeValue:'5分钟', // 申请时长
+        detailObj:{
+          enterpriseName: "",
+          applyName: "",
+          applyPhone: "",
+          applyPositionName: "",
+          applyTime: null,
+          duration:1,
+          applyReason:'',
+          dataCount: 0,
+          dataType: 2,
+          dataContent: '',
+          reportStartTime: null,
+          reportEndTime: null
+        },
+        defaultMsg:'',
+        defaultBool:false,
+        timer:null,
+        resultState:'1', // 申请结果  0超时  1未审核  2被他人审核 3被自己审核
+      },
+      created(){
+        this.getUrlData();
+      },
+      filters:{
+        dateFormat(timeSpan, format) {
+          if (!timeSpan) return
+          timeSpan = timeSpan.toString().length === 10 ? timeSpan * 1000 : timeSpan
+          let date = new Date(timeSpan)
+          let o = {
+            'M+': date.getMonth() + 1,
+            'D+': date.getDate(),
+            'W': '日一二三四五六'.charAt(date.getDay()),
+            'h+': date.getHours(),
+            'm+': date.getMinutes(),
+            's+': date.getSeconds(),
+            'q+': Math.floor((date.getMonth() + 3) / 3),
+            'S': date.getMilliseconds()
+          }
+          if (/(Y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+          }
+          for (let k in o) {
+            if (new RegExp('(' + k + ')').test(format)) {
+              format = format.replace(RegExp.$1,
+              RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length))
+            }
+          }
+          return format
+        }
+      },
+      methods:{
+        getUrlData(){ // 获取路由的id
+          this.applyId = this.getQueryString('applyId')?this.getQueryString('applyId'):this.applyId;
+          this.openid = this.getQueryString('openid')?this.getQueryString('openid'):this.openid;
+          this.type = this.getQueryString('type')?this.getQueryString('type'):this.type;
+          document.title = this.type=='1'?'风险模式申请':'完整数据下载申请';
+          console.log('获取applyId：' + this.applyId);
+          if(this.applyId){
+            axios.post('/api-admin/apply-info',Qs.stringify({
+              requestProject:'gic-web',
+              applyId:this.applyId,
+              openid:this.openid,
+              type:this.type
+            })).then((res)=>{
+              var data = res.data;
+              if(data.errorCode==0){
+                this.detailObj = data.result;
+                this.resultState = data.result.checkStatus;
+                if(this.resultState=='3'){ // 1未审核
+                  
+                }else{
+                  window.location.href = 'applyResult.html?type=' + this.type + '&applyName=' + this.detailObj.applyName + '&state=' + this.resultState
+                }
+              }else{
+                var that = this;
+                that.defaultMsg = data.message;
+                that.defaultBool = true;
+                that.timer = window.setTimeout(()=>{
+                  that.defaultBool = false;
+                  window.clearTimeout(that.timer)
+                },2000)
+              }
+            })
+          }
+        },
+        getQueryString(name) {   // 获取url参数
+          var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
+          var r = window.location.search.substr(1).match(reg);  
+          if (r != null) return decodeURI(r[2]);
+          return null;  
+        },
+        changeRuleState(){  // 是否选中风险声明
+          this.ruleChecked = !this.ruleChecked
+        },
+        enterApply(){  // 通过申请按钮
+          if(this.ruleChecked){
+            axios.post('/api-admin/audit-apply',Qs.stringify({
+              requestProject:'gic-web',
+              applyId:this.applyId,
+              openid:this.openid,
+              type:this.type,
+              duration:this.detailObj.duration,
+            })).then((res)=>{
+              var data = res.data;
+              if(data.errorCode==0){
+                window.location.href = 'applyResult.html?type=' + this.type + '&applyName=' + this.detailObj.applyName + '&state=' + data.result.code
+              }else{
+                var that = this;
+                that.defaultMsg = data.message;
+                that.defaultBool = true;
+                that.timer = window.setTimeout(()=>{
+                  that.defaultBool = false;
+                  window.clearTimeout(that.timer)
+                },2000)
+              }
+            })
+          }
+        },
+        showTime(){  // 选择时间框的显示和隐藏
+          this.toggleTimeBool = true;
+        },
+        cancelTime(){ // 弹框的取消按钮
+          this.toggleTimeBool = false;
+        },
+        selectTime(val,duration){  // 选中时间
+          this.timeValue = val;
+          this.toggleTimeBool = false;
+          this.detailObj.duration = duration;
+        },
+        getRules(){  // 风险声明
+          if(this.type=='1'){
+            window.location.href = 'applyRules.html'
+          }else if(this.type=='2'){
+            window.location.href = 'reportRules.html'
+          }
+        },
+      }
+    })
+  </script>
+</body>
+</html>

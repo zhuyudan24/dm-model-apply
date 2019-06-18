@@ -1,0 +1,31 @@
+#content{
+  height: 100%;
+  background: #fff;
+}
+.result-wrap .img{
+  text-align: center;
+  margin-top: 1.6rem;
+}
+.result-wrap .img i{
+  font-size: 1.85rem;
+  line-height: 1.85rem;
+}
+.result-wrap .img i.icon-chenggong{
+  color: #1AAD19;
+}
+.result-wrap .img i.icon-jinggao{
+  color: #C9C9C9;
+}
+.result-wrap .result{
+  margin: 0.5rem 0 0.3rem 0;
+  text-align: center;
+  color: #333;
+  font-size: 0.4rem;
+  line-height: 0.56rem;
+}
+.result-wrap .apply-name{
+  text-align: center;
+  color: #999;
+  font-size: 0.28rem;
+  line-height: 0.4rem;
+}

@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta content="yes" name="apple-mobile-web-app-capable">
+  <meta content="yes" name="apple-touch-fullscreen">
+  <meta content="telephone=no,email=no" name="format-detection">
+  <meta content="black" name="apple-mobile-web-app-status-bar-style">
+  <title>申请</title>
+  <link rel="stylesheet" href="css/public.css">
+  <link rel="stylesheet" href="css/font/iconfont.css">
+  <link rel="stylesheet" href="css/result.css">
+  <script src="js/vue.min.js"></script>
+  <script src="js/rem.js"></script>
+</head>
+<body>
+  <div id="content">
+    <div class="result-wrap">
+      <p class="img"><i class="font_family" :class="{'icon-chenggong':dangerSucc,'icon-jinggao':!dangerSucc}"></i></p>
+      <p class="result" v-cloak>{{ dangerMsg }}</p>
+      <p class="apply-name" v-cloak>{{ dangerReason }}</p>
+    </div>
+  </div>
+  <script>
+    var app = new Vue({
+      el:"#content",
+      data:{
+        dangerBool:true,
+        dangerSucc:true,
+        dangerMsg:'申请已通过',
+        dangerReason:'申请的时长已过期',
+        type:'1',
+        applyName:'默认',
+        state:'1',
+      },
+      created(){
+        this.init();
+      },
+      methods:{
+        init(){
+          this.type = this.getQueryString('type')?this.getQueryString('type'):this.type;
+          this.applyName = this.getQueryString('applyName')?this.getQueryString('applyName'):this.applyName;
+          this.state = this.getQueryString('state')?this.getQueryString('state'):this.state;
+          this.dangerBool = this.type == '1'?true:false;
+          this.dangerSucc = this.state == '0'?true:false;
+          this.dangerMsg = this.dangerSucc?'申请已通过':'申请已失效';
+          if(this.dangerBool){
+            document.title = '风险模式申请';
+            if(this.state == '0'){
+              this.dangerReason = this.applyName + '申请的风险模式';
+            }
+          }else{
+            document.title = '完整数据下载申请';
+            if(this.state == '0'){
+              this.dangerReason = this.applyName + '申请的完整数据下载权限';
+            }
+          }
+          if(this.state == '1'){
+            this.dangerReason = '申请的时长已过期';
+          }else if(this.state == '2'){
+            this.dangerReason = '该申请已被其他审核员通过';
+          }
+        },
+        getQueryString(name) {   // 获取url参数
+          var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
+          var r = window.location.search.substr(1).match(reg);  
+          if (r != null) return decodeURI(r[2]);
+          return null;  
+        },
+      }
+    })
+  </script>
+</body>
+</html>
